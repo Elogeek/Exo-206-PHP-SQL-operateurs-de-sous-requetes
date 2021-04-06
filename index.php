@@ -1,5 +1,5 @@
 <?php
-
+require_once "DB/DB.php";
 /**
  * Commencez par importer le fichier sql live.sql via PHPMyAdmin.
  * 1. Sélectionnez tous les utilisateurs.
@@ -10,3 +10,42 @@
  *
  * ( PS: Sélectionnez, mais affichez le résultat à chaque fois ! ).
  */
+$request = DB::getInstance()->prepare("SELECT * FROM user");
+
+if($request->execute()) {
+    echo "<pre>";
+    print_r($request->fetchAll());
+    echo "</pre>";
+}
+
+$request = DB::getInstance()->prepare("SELECT * FROM article");
+
+if($request->execute()) {
+    echo "<pre>";
+    print_r($request->fetchAll());
+    echo "</pre>";
+}
+
+$request = DB::getInstance()->prepare("SELECT * FROM user WHERE id = ANY (SELECT user_fk FROM article WHERE contenu LIKE '%poterie%')");
+
+if($request->execute()) {
+    echo "<pre>";
+    print_r($request->fetchAll());
+    echo "</pre>";
+}
+
+$request = DB::getInstance()->prepare("SELECT * FROM user WHERE id = ANY (SELECT user_fk FROM article HAVING COUNT(user_fk) >= 2)");
+
+if($request->execute()) {
+    echo "<pre>";
+    print_r($request->fetchAll());
+    echo "</pre>";
+}
+
+$request = DB::getInstance()->prepare("SELECT * FROM user WHERE id = exists (SELECT user_fk FROM article)");
+
+if($request->execute()) {
+    echo "<pre>";
+    print_r($request->fetchAll());
+    echo "</pre>";
+}
